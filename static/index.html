@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>D&D | Realm Table</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar">
+    <div class="brand-mark">✦</div>
+    <div><div class="brand">REALM TABLE</div><div class="brand-sub">DUNGEONS · DRAGONS · ADVENTURE</div></div>
+    <div class="top-spacer"></div>
+    <div id="connection" class="connection"><span class="dot"></span> Не підключено</div>
+  </header>
+
+  <main id="gate" class="gate">
+    <section class="hero">
+      <div class="eyebrow">YOUR STORY BEGINS HERE</div>
+      <h1>Збери свою<br><em>легенду.</em></h1>
+      <p>Спільний стіл для пригод: карта, герої, кидки кубиків і битви — в одному місці.</p>
+      <div class="hero-runes">ᚱ　ᛟ　ᚷ　ᚨ　ᛞ</div>
+    </section>
+    <section class="entry-card">
+      <div class="tabs">
+        <button class="tab active" data-mode="create">Створити пригоду</button>
+        <button class="tab" data-mode="join">Приєднатися</button>
+      </div>
+      <form id="create-form" class="entry-form">
+        <label>Назва кампанії<input id="campaign-name" value="Хроніки Забутих Земель" required maxlength="80"></label>
+        <label>Ім’я Майстра (GM)<input id="gm-name" placeholder="Наприклад, Андрій" required maxlength="40"></label>
+        <button class="primary wide" type="submit">✦ Створити сесію</button>
+      </form>
+      <form id="join-form" class="entry-form hidden">
+        <label>Код сесії<input id="join-code" placeholder="ABC-234" required maxlength="10"></label>
+        <label>Твоє ім’я<input id="player-name" placeholder="Ім’я героя або гравця" required maxlength="40"></label>
+        <button class="primary wide" type="submit">Увійти до пригоди →</button>
+      </form>
+      <div id="gate-error" class="error"></div>
+      <div class="fineprint">Сесії зберігаються на сервері · Синхронізація в реальному часі</div>
+    </section>
+  </main>
+
+  <main id="game" class="game hidden">
+    <aside class="sidebar">
+      <div class="campaign-label">ПОТОЧНА КАМПАНІЯ</div>
+      <h2 id="campaign-title">—</h2>
+      <div class="session-code-wrap"><span>КОД ПРИГОДИ</span><button id="copy-code" class="code-button">———</button></div>
+      <div class="role-chip" id="role-chip">PLAYER</div>
+      <nav class="nav">
+        <button class="nav-btn active" data-view="overview">⌂ <span>Огляд</span></button>
+        <button class="nav-btn" data-view="map">▦ <span>Ігрова карта</span></button>
+        <button class="nav-btn" data-view="characters">♙ <span>Персонажі та NPC</span></button>
+        <button class="nav-btn" data-view="combat">⚔ <span>Бойова система</span></button>
+        <button class="nav-btn" data-view="dice">◉ <span>Кубики</span></button>
+        <button class="nav-btn" data-view="history">☷ <span>Історія подій</span></button>
+      </nav>
+      <div class="sidebar-bottom"><span class="online-indicator"></span><span id="participant-count">0 учасників</span><button id="leave" class="text-button">Вийти</button></div>
+    </aside>
+
+    <section class="workspace">
+      <div class="page-heading">
+        <div><div class="eyebrow" id="view-kicker">CAMPAIGN DASHBOARD</div><h1 id="view-title">Огляд пригоди</h1></div>
+        <div class="user-pill"><div class="avatar" id="user-avatar">?</div><div><strong id="user-name">Мандрівник</strong><small id="user-role">PLAYER</small></div></div>
+      </div>
+
+      <section id="view-overview" class="view">
+        <div class="welcome-panel">
+          <div class="welcome-copy"><div class="eyebrow">THE TABLE IS YOURS</div><h2>Вітаємо у світі<br>пригод.</h2><p>Керуйте героями, досліджуйте карту та створюйте історію разом.</p><button class="primary" data-goto="map">Відкрити карту →</button></div>
+          <div class="sigil">ᛟ</div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-card"><span>УЧАСНИКИ</span><strong id="stat-players">0</strong><small>у цій сесії</small></div>
+          <div class="stat-card"><span>ГЕРОЇ ТА NPC</span><strong id="stat-characters">0</strong><small>на ігровому полі</small></div>
+          <div class="stat-card"><span>РАУНД БОЮ</span><strong id="stat-round">—</strong><small id="stat-turn">Бій не розпочато</small></div>
+        </div>
+        <div class="section-head"><div><div class="eyebrow">RECENT ACTIVITY</div><h2>Останні події</h2></div><button class="ghost" data-goto="history">Усі події →</button></div>
+        <div id="recent-events" class="event-list"></div>
+      </section>
+
+      <section id="view-map" class="view hidden">
+        <div class="toolbar"><div><h2>Тактичне поле</h2><p>Натисни клітинку, щоб перемістити доступний токен.</p></div><div id="gm-map-tools" class="gm-tools hidden"><label class="upload-button">Завантажити карту<input type="file" id="map-upload" accept="image/png,image/jpeg,image/webp" hidden></label><button class="ghost" id="clear-map">Очистити фон</button></div></div>
+        <div class="map-layout">
+          <div class="map-frame"><div id="battle-map" class="battle-map"><div class="map-vignette"></div><div class="map-title">THE FORGOTTEN RUINS</div><div id="map-tokens" class="map-tokens"></div></div></div>
+          <aside class="map-legend panel"><h3>На полі</h3><div id="map-roster"></div><p class="muted tiny">Гравці переміщують лише власного героя. GM може рухати всі токени.</p></aside>
+        </div>
+      </section>
+
+      <section id="view-characters" class="view hidden">
+        <div class="toolbar"><div><h2>Герої та створіння</h2><p>Характеристики, здоров’я та стани учасників пригоди.</p></div><div class="button-row"><button class="primary" id="add-character">＋ Створити героя</button><button class="ghost gm-only" id="add-npc">＋ Додати NPC</button></div></div>
+        <div id="character-grid" class="character-grid"></div>
+      </section>
+
+      <section id="view-combat" class="view hidden">
+        <div class="combat-banner"><div><div class="eyebrow">ENCOUNTER TRACKER</div><h2>Порядок бою</h2><p>Ініціатива, активний хід і керування HP.</p></div><div class="combat-round">РАУНД<strong id="combat-round">—</strong></div></div>
+        <div class="combat-actions gm-only"><button class="primary" id="start-combat">⚔ Кинути ініціативу</button><button class="ghost" id="next-turn">Наступний хід →</button></div>
+        <div id="initiative-list" class="initiative-list"></div>
+        <div class="attack-panel panel gm-only"><h3>Атака</h3><div class="attack-fields"><label>Атакує<select id="attacker-select"></select></label><label>Ціль<select id="target-select"></select></label><label>Бонус<input id="attack-bonus" type="number" value="0"></label><label>Шкода<input id="attack-damage" value="1d6" placeholder="1d6+2"></label><button class="primary" id="attack-btn">Кинути атаку</button></div></div>
+      </section>
+
+      <section id="view-dice" class="view hidden">
+        <div class="dice-hero"><div class="eyebrow">FATE IS IN YOUR HANDS</div><h2>Кинь кубики.</h2><p>Введи формулу, додай модифікатор і нехай випадок вирішить.</p><div class="dice-display" id="dice-display">20</div><form id="roll-form" class="roll-form"><label>Формула кидка<input id="roll-formula" value="1d20+5" required></label><button class="primary" type="submit">◉ Кинути</button></form><div class="muted tiny">Приклади: 1d20+5 · 2d6 · 1d100 · 4d8-1</div></div>
+        <div class="section-head"><div><div class="eyebrow">ROLL HISTORY</div><h2>Останні кидки</h2></div></div><div id="dice-history" class="event-list"></div>
+      </section>
+
+      <section id="view-history" class="view hidden">
+        <div class="section-head"><div><div class="eyebrow">CHRONICLE</div><h2>Літопис пригоди</h2><p class="muted">Зміни HP, кидки кубиків, переміщення та події бою.</p></div></div>
+        <div id="all-events" class="event-list"></div>
+      </section>
+    </section>
+  </main>
+</div>
+
+<dialog id="character-dialog" class="modal">
+  <form id="character-form" method="dialog">
+    <div class="modal-head"><div><div class="eyebrow" id="char-dialog-kicker">HERO CREATION</div><h2 id="char-dialog-title">Створити героя</h2></div><button type="button" class="icon-button" id="close-character">✕</button></div>
+    <input type="hidden" id="char-kind" value="PLAYER">
+    <div class="form-grid"><label>Ім’я<input id="char-name" required maxlength="50" placeholder="Elara"></label><label>Рівень<input id="char-level" type="number" min="1" max="20" value="1"></label><label>HP<input id="char-hp" type="number" min="1" max="999" value="12"></label><label>AC<input id="char-ac" type="number" min="1" max="40" value="12"></label></div>
+    <div class="attribute-grid"><label>STR<input id="char-str" type="number" value="10"></label><label>DEX<input id="char-dex" type="number" value="10"></label><label>CON<input id="char-con" type="number" value="10"></label><label>INT<input id="char-int" type="number" value="10"></label><label>WIS<input id="char-wis" type="number" value="10"></label><label>CHA<input id="char-cha" type="number" value="10"></label></div>
+    <button class="primary wide" type="submit">Зберегти персонажа</button><div id="char-error" class="error"></div>
+  </form>
+</dialog>
+<div id="toast" class="toast"></div>
+<script src="/static/app.js"></script>
+</body></html>
